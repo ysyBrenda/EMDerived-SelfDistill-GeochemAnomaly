@@ -33,7 +33,7 @@ This is a PyTorch implementation of the "Transformer Self-Distillation: A Robust
     
    Grid search:
    
-   - If necessary, use the `gridsearch.sh` to find the optimal parameters (If necessary).
+   - If necessary, use the `gridsearch.sh` to find the optimal parameters.
   
 
 ### 3. Geochemical Anomaly Detection
@@ -43,7 +43,7 @@ We use the trained Transformer model for the reconstruction of geochemical data 
 
    2. Prepare trained model (after multiple generations of distillation), and save it as `model_best.chkpt`
 
-   3. Run `Anomaly_detection_run.sh`,or:
+   3. Run `Anomaly_detection_run.sh`, or:
    ```bash
    python anomaly_detection.py -data_pkl ./data/prediction.pkl -raw_data ./data/prediction.csv -model ./model/model_best.chkpt -output prediction
    ```
@@ -61,6 +61,5 @@ Put the above data into the `data` folder in csv format.
 ---
 # Acknowledgement
 
-- The transformer框架 implementation borrows heavily from  in some parts of the Transformer's architecture.
-  - Transformer architecture implementation borrows from [attention-is-all-you-need-pytorch](https://github.com/jadore801120/attention-is-all-you-need-pytorch) in some parts of the Transformer's architecture.
-  - Builds upon the author's previous work in [attention-is-all-you-need-pytorch](https://github.com/jadore801120/attention-is-all-you-need-pytorch)
+  - Transformer architecture implementation borrows from [attention-is-all-you-need-pytorch](https://github.com/jadore801120/attention-is-all-you-need-pytorch) in some components.
+  - Builds upon the author's previous work in [Transformer-For-Geochemical-Anomaly-Detection](https://github.com/ysyBrenda/Transformer-For-Geochemical-Anomaly-Detection)
