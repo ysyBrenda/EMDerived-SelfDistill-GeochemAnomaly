@@ -26,6 +26,8 @@ class PositionalEncoding(nn.Module):
 
     def forward(self, x):
         pos,x=x[:,:,0:2],x[:,:,2:]
+        pos[:,:,0]=pos[:,:,0]
+        pos[:,:,1]=pos[:,:,1]
 
         self.pos_table = self.linear_p(pos)
         return x + self.pos_table[:, :x.size(1)].clone().detach(), self.pos_table.clone().detach()
@@ -182,4 +184,54 @@ class Transformer(nn.Module):
 
         return seq_logit.view(-1, seq_logit.size(2)),enc_slf_attn_list,dec_enc_attn_list
 
+
+
+class Transformer_s(nn.Module):
+    ''' A sequence to sequence model with attention mechanism. '''
+
+    def __init__(
+            self,  src_pad_idx, trg_pad_idx,
+            d_word_vec=38, d_model=38, d_inner=2048,
+            n_layers=6, n_head=8, d_k=38, d_v=38, dropout=0.1, n_position=2000,
+                 ):
+
+        super().__init__()
+
+        self.src_pad_idx, self.trg_pad_idx = src_pad_idx, trg_pad_idx
+
+        self.scale_prj = False   #True
+        self.d_model = d_model
+
+        self.encoder = Encoder(
+            n_position=n_position,
+            d_word_vec=d_word_vec, d_model=d_model, d_inner=d_inner,
+            n_layers=n_layers, n_head=n_head, d_k=d_k, d_v=d_v,
+            pad_idx=src_pad_idx, dropout=dropout)
+
+        self.decoder = Decoder(
+            n_position=n_position,
+            d_word_vec=d_word_vec, d_model=d_model, d_inner=d_inner,
+            n_layers=n_layers, n_head=n_head, d_k=d_k, d_v=d_v,
+            pad_idx=trg_pad_idx, dropout=dropout)
+
+        for p in self.parameters():
+            if p.dim() > 1:
+                nn.init.xavier_uniform_(p)
+
+        assert d_model == d_word_vec, \
+        'To facilitate the residual connections, \
+         the dimensions of all module outputs shall be the same.'
+
+    def forward(self, src_seq, trg_seq):
+
+        src_mask=get_pad_mask(src_seq[:,:,0], self.src_pad_idx)
+        trg_mask=trg_seq[:, :,0]  #.unsqueeze(1)
+        trg_mask = get_pad_mask(trg_mask, self.trg_pad_idx) & get_subsequent_mask(trg_mask)
+
+        enc_output,enc_slf_attn_list = self.encoder(src_seq, src_mask,return_attns=True)
+        dec_output, dec_slf_attn_list, dec_enc_attn_list= self.decoder(trg_seq, trg_mask, enc_output, src_mask,return_attns=True)
+
+        seq_logit=dec_output
+
+        return seq_logit.view(-1, seq_logit.size(2)),enc_slf_attn_list,dec_enc_attn_list
 

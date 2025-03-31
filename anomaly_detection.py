@@ -11,6 +11,7 @@ import dill as pickle
 from tqdm import tqdm
 import numpy as np
 
+
 from transformer.Models import Transformer
 from transformer.Translator import Translator
 import calculate_anomalyscore
@@ -46,8 +47,9 @@ def main():
                         help='Path to model weight file')
     parser.add_argument('-data_pkl', required=True,
                         help='Pickle file.')
-    parser.add_argument('-output', default='pred.txt',
-                        help="Path to output the predictions")
+    parser.add_argument('-output', default='prediction',
+                        help="Path to output the predictions——file————")
+
     parser.add_argument('-no_cuda', action='store_true')
 
     parser.add_argument('-raw_data', default='data/pos_feature.csv',help="Path to raw_data(with coordinates)")
@@ -82,7 +84,7 @@ def main():
     import time
     start = time.time()
     for i,example in enumerate(tqdm(test_loader, mininterval=2, desc='  - (Test)', leave=False)):
-    
+
         src_seq=example[0]
         trg_seq=example[1]
         pred_seq,dec_enc_attn=translator.translate_sentence(src_seq.to(device),trg_seq.to(device))
@@ -92,9 +94,19 @@ def main():
 
     print('[Info] Reconstruction Finished. {}s'.format(time.time()-start))
 
+    torch.save(Trg_all, 'Trg_all.pt')
+    # Save Pred_all tensor to a file
+    torch.save(Pred_all, 'Pred_all.pt')
+
+
+    # Load Pred_all tensor from a file
+    # Trg_all_loaded = torch.load('Trg_all.pt')
+    # Pred_all_loaded = torch.load('Pred_all.pt')
+
+
     #====== calculate anomalyscore, and valuation (AUC)======================
     AUC_mean=calculate_anomalyscore.calculate(Pred_all, Trg_all,\
-                                              raw_data=opt.raw_data,Au_data=opt.Au_data)
+                                              raw_data=opt.raw_data,Au_data=opt.Au_data,head=opt.output)
     print('[Info] Identify Geochamical Anomaly Finished.'.format(time.time() - start))
     print('----- the AUC_MEAN is: {:.4f}'.format(AUC_mean))
 

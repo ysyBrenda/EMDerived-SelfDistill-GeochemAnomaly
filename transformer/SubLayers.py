@@ -46,7 +46,7 @@ class MultiHeadAttention(nn.Module):
         if mask is not None:
             mask = mask.unsqueeze(1)   # For head axis broadcasting.
 
-        q, attn = self.attention(q, k, v, mask=mask)  #todo bug
+        q, attn = self.attention(q, k, v, mask=mask)  #todo
 
         # Transpose to move the head dimension back: b x lq x n x dv
         # Combine the last two dimensions to concatenate all the heads together: b x lq x (n*dv)
