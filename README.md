@@ -129,6 +129,3 @@ If you find this code useful, please cite our paper (BibTeX will be added upon p
 * Some components of the model backbone are adapted from [attention-is-all-you-need-pytorch](https://github.com/jadore801120/attention-is-all-you-need-pytorch)
 * Builds upon earlier work: [Transformer-For-Geochemical-Anomaly-Detection](https://github.com/ysyBrenda/Transformer-For-Geochemical-Anomaly-Detection)
 
----
-
-如果你还希望添加模型结构图、可视化结果图或论文链接（arXiv/DOI），我也可以帮你更新。是否需要添加这些内容？
